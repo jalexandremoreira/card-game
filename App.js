@@ -1,37 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Center, HStack, NativeBaseProvider } from 'native-base';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  Dimensions,
-  TextInput,
-} from 'react-native';
+import { Box, Button, Text, HStack, NativeBaseProvider } from 'native-base';
+import { StyleSheet, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+
+import {
+  TriangleShape,
+  SquareShape,
+  CircleShape,
+  HexagonShape,
+} from './components/Shapes';
 
 import randomizeArray from './src/middleware/randomizeArray';
 import { getCards } from './src/service/cards';
 
-const rows = [11, 15, 21];
-
 export default function App() {
   const [cards, setCards] = useState([]);
-  const [rowsIndex, setRowsIndex] = useState(0);
 
+  const rows = 15;
   const { width } = Dimensions.get('window');
-  const tilesize = width / rows[rowsIndex];
+  const tilesize = width / rows;
 
   const handleArray = () => {
     const cardArray = getCards();
 
-    const randomizedCards = randomizeArray(
-      cardArray,
-      rows[rowsIndex] * rows[rowsIndex]
-    );
-
-    console.log('rows', rows[rowsIndex]);
-    console.log('rows * rows', rows[rowsIndex] * rows[rowsIndex]);
+    const randomizedCards = randomizeArray(cardArray, rows * rows, rows);
 
     setCards(randomizedCards);
   };
@@ -44,6 +36,23 @@ export default function App() {
   }, []);
 
   if (cards.length < 0) return null;
+
+  const Shape = ({ type }) => {
+    const iconSize = 7;
+
+    switch (type) {
+      case 'Square':
+        return <SquareShape color="#E8C09B" size={iconSize} />;
+      case 'Circle':
+        return <CircleShape color="#8BA5CC" size={iconSize} />;
+      case 'Hexagon':
+        return <HexagonShape color="#D67F7F" size={iconSize} />;
+      // case 'Triangle':
+      //   return <TriangleShape color="#B8D792" size={iconSize} />;
+      default:
+        return <TriangleShape color="#B8D792" size={iconSize} />;
+    }
+  };
 
   return (
     <>
@@ -65,26 +74,27 @@ export default function App() {
               {rows[rowsIndex]}
             </Button> */}
           </HStack>
-          <Text style={{ fontWeight: 'bold' }}>Cards</Text>
 
-          <View style={styles.cardContainer}>
-            {cards.map((card, index) => {
+          <Box style={styles.cardContainer} mt={5}>
+            {cards.map(({ type, rowLocation, columnLocation }, index) => {
               return (
-                <View key={index} style={{ width: tilesize, height: tilesize }}>
-                  {/* <Text>{card.type}</Text> */}
-                  {card.img ? (
-                    <View style={styles.card}>
-                      <Image source={card.img} style={styles.image} />
-                    </View>
-                  ) : card.type === 'home' ? (
-                    <View style={{ ...styles.card, backgroundColor: 'red' }} />
+                <Box key={index} width={tilesize} height={tilesize}>
+                  {type === 'home' ? (
+                    <Box style={{ ...styles.card, backgroundColor: 'blue' }} />
+                  ) : type !== '' ? (
+                    <Box style={styles.card}>
+                      {/* <Shape type={type} /> */}
+                      <HStack>
+                        <Text>{rowLocation}</Text>
+                      </HStack>
+                    </Box>
                   ) : (
-                    <View style={styles.card} />
+                    <Box style={styles.card} />
                   )}
-                </View>
+                </Box>
               );
             })}
-          </View>
+          </Box>
         </Box>
       </NativeBaseProvider>
     </>
@@ -108,10 +118,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     // margin: "auto",
-  },
-  image: {
-    width: '80%',
-    height: '80%',
-    margin: 'auto',
   },
 });

@@ -1,19 +1,15 @@
 const cards = [
   {
-    type: "square",
-    img: require(`../../assets/shapes/square.png`),
+    type: 'Square',
   },
   {
-    type: "cirlce",
-    img: require(`../../assets/shapes/circle.png`),
+    type: 'Cirlce',
   },
   {
-    type: "triagle",
-    img: require(`../../assets/shapes/triangle.png`),
+    type: 'Triagle',
   },
   {
-    type: "hexagon",
-    img: require(`../../assets/shapes/hexagon.png`),
+    type: 'Hexagon',
   },
 ];
 

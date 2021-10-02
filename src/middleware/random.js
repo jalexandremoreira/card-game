@@ -5,7 +5,6 @@ export default function (array, percentage) {
     return array[Math.floor(Math.random() * array.length)];
   } else
     return {
-      type: "none",
-      img: "",
+      type: '',
     };
 }
